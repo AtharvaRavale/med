@@ -1,0 +1,78 @@
+<!-- wishlist.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Wishlist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-tr from-[#e8ebf7] to-[#f8f9ff] min-h-screen font-sans">
+
+    <div class="max-w-5xl mx-auto py-12 px-4 sm:px-8">
+
+        <!-- Back Button -->
+        <a href="{% url 'category_list' %}" class="inline-flex items-center gap-2 bg-[#140e4a] hover:bg-[#1a1560] text-white px-6 py-2.5 rounded-full shadow font-semibold mb-10 transition">
+            <i class="fas fa-arrow-left"></i>
+            <span class="text-base">Back to Products</span>
+        </a>
+
+        <!-- Header -->
+        <div class="flex items-center gap-4 mb-10">
+            <div class="p-3 bg-white rounded-full shadow">
+                <i class="fas fa-heart text-pink-500 text-2xl"></i>
+            </div>
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-[#140e4a] tracking-tight">My Wishlist</h1>
+        </div>
+
+        {% if wishlist_items %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {% for item in wishlist_items %}
+            <div class="bg-white rounded-2xl shadow-xl p-6 flex gap-6 items-center border border-gray-100 hover:shadow-2xl transition">
+
+                <!-- Product Image or Placeholder -->
+                {% if item.product.image %}
+                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-28 h-28 object-cover rounded-xl bg-gray-100 border border-gray-200 shadow-sm flex-shrink-0">
+                {% else %}
+                <div class="w-28 h-28 flex items-center justify-center rounded-xl bg-gray-100 border border-gray-200 shadow-sm text-gray-300 flex-shrink-0">
+                    <i class="fas fa-box fa-2x"></i>
+                </div>
+                {% endif %}
+
+                <!-- Product Details -->
+                <div class="flex-1 flex flex-col justify-between min-w-0">
+                    <div>
+                        <h2 class="text-xl font-bold text-[#140e4a] truncate">{{ item.product.name }}</h2>
+                        <p class="text-gray-600 text-sm mt-1 mb-2 line-clamp-2">{{ item.product.description|truncatewords:18 }}</p>
+                        <div class="flex items-center text-xs text-gray-400">
+                            <i class="fas fa-clock mr-2"></i>
+                            Added: {{ item.added_at|date:"F j, Y, g:i a" }}
+                        </div>
+                    </div>
+                    <!-- Remove Button -->
+                    <form method="post" action="{% url 'remove_from_wishlist' item.product.id %}" class="mt-5">
+                        {% csrf_token %}
+                        <button type="submit"
+                            class="flex items-center gap-2 px-4 py-2 rounded-full bg-red-50 text-red-700 font-semibold hover:bg-red-600 hover:text-white shadow transition">
+                            <i class="fas fa-trash"></i> Remove
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <!-- Empty State -->
+        <div class="flex flex-col items-center justify-center bg-white rounded-2xl shadow-xl px-8 py-16 mt-8 border border-dashed border-[#140e4a]/20">
+            <div class="p-6 bg-gray-50 rounded-full shadow mb-4">
+                <i class="fas fa-heart-broken fa-3x text-gray-300"></i>
+            </div>
+            <p class="text-xl text-gray-500 mb-2 font-medium">Your wishlist is empty.</p>
+            <a href="{% url 'category_list' %}" class="mt-6 bg-[#140e4a] text-white px-8 py-3 rounded-full font-semibold shadow hover:bg-[#1a1560] transition">
+                Browse Products
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
